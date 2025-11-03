@@ -30,6 +30,7 @@ function onSubmit(data: FormData) {
       <img src={logo} alt="" /></Link>
 
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white max-w-xl w-full rounded-lg">
+        <div className="mb-3">
         <Input
         type="email"
         placeholder="Digite seu email"
@@ -37,6 +38,9 @@ function onSubmit(data: FormData) {
         error={errors.email?.message}
         register={register}
         ></Input>
+        </div>
+
+        <div className="mb-3">
         <Input
         type="password"
         placeholder="Digite sua senha"
@@ -44,8 +48,12 @@ function onSubmit(data: FormData) {
         error={errors.password?.message}
         register={register}
         ></Input>
-        <button>Acessar</button>
+        </div>
+
+        <button type="submit" className="bg-black text-white w-full rounded-md h-10 font-medium">Acessar</button>
       </form>
+      <Link to="/register" className="mt-4  hover:underline">
+      Não possui uma conta? Cadastre-se</Link>
     </div>
     </Container>
   )
