@@ -9,7 +9,7 @@ export default function Header() {
     <>
     <div className="w-full flex items-center justify-center h-16 bg-white drop-shadow mb-4">
     <header className="flex w-full max-w-7xl items-center justify-between">
-      <Link to="/">Logo img</Link>
+      <Link to="/"><img src="logo" alt="Web Carros company logo" /></Link>
 
     {!signed && !loadingAuth && (
       <Link to="/dashboard">
