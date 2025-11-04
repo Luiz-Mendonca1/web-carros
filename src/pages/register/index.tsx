@@ -6,8 +6,9 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {auth} from "../../services/firebaseconection";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const schema = z.object({
   name: z.string().nonempty("O nome é obrigatório"),
@@ -23,6 +24,13 @@ const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
   resolver: zodResolver(schema),
   mode: "onChange",
 });
+
+useEffect(() => {
+  async function handleLogout() {
+      await signOut(auth);
+  }
+  handleLogout();
+}, []);
 
 async function onSubmit(data: FormData) {
   createUserWithEmailAndPassword(auth, data.email, data.password)
