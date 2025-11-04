@@ -24,7 +24,7 @@ export default function Home() {
         <p className="font-bold mt-1 mb-2 px-2">IK280</p>
         <div className="flex flex-col px-2">
           <span className="text-zinc-700 mb-6">1998 - 200.100km</span>
-          <strong className="text-black font-medium text-xl">R$ 10'000.01</strong>
+          <strong className="text-black font-medium text-xl">R$ 10.000</strong>
         </div>
 
         <div className="w-full h-px bg-slate-200 my-2"></div>
