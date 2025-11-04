@@ -8,7 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {auth} from "../../services/firebaseconection";
 import { createUserWithEmailAndPassword, updateProfile, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 const schema = z.object({
   name: z.string().nonempty("O nome é obrigatório"),
@@ -19,6 +20,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function Register() {
+  const { handleInfoUser } = useContext (AuthContext);
 const navigate = useNavigate();
 const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
   resolver: zodResolver(schema),
@@ -37,6 +39,12 @@ async function onSubmit(data: FormData) {
   .then(async(user) => {
     await updateProfile(user.user, {
       displayName: data.name
+    });
+
+    handleInfoUser({
+      uid: user.user.uid,
+      email: user.user.email,
+      displayName: data.name,
     });
 
     console.log("Usuário cadastrado com sucesso:", user.user);

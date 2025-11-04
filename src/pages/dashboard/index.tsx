@@ -1,7 +1,12 @@
+import { Container } from "../../components/container"
+import PainelHeader from "../../components/painelHeader"
+
 export default function Dashboard() {
   return (
     <>
-    <h1>Dashboard page</h1>
+    <Container>
+      <PainelHeader />
+    </Container>
     </>
   )
-}
+} 

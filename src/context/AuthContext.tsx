@@ -11,12 +11,14 @@ interface AuthProviderProps {
 }
 
 // Formato dos dados que exportamos através do AuthContext
-type AuthContextData = {
-  // 'signed' indica se um usuário está autenticado (true) ou não (false)
-  signed: boolean;
-  // 'loadingAuth' é true enquanto verificamos o estado inicial de autenticação
-  loadingAuth: boolean;
-};
+interface AuthContextData {
+    // 'signed' indica se um usuário está autenticado (true) ou não (false)
+    signed: boolean;
+    // 'loadingAuth' é true enquanto verificamos o estado inicial de autenticação
+    loadingAuth: boolean;
+    handleInfoUser: (user: UserProps) => void;
+    user: UserProps | null;
+}
 
 // Estrutura mínima do usuário que guardamos no estado local quando alguém está logado
 interface UserProps {
@@ -35,6 +37,15 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserProps | null>(null);
   // Flag de carregamento enquanto determinamos o estado inicial de autenticação
   const [loadingAuth, setLoadingAuth] = useState(true);
+
+  // Função para atualizar o usuário manualmente a partir de outros componentes
+  function handleInfoUser({ displayName, email, uid }: UserProps) {
+    setUser({
+      uid,
+      email,
+      displayName,
+    });
+  }
 
   useEffect(() => {
     // Inscreve-se nas mudanças de estado do Firebase Auth. Este callback executa
@@ -61,7 +72,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     // listeners duplicados se o provider for remontado
     return () => unsubscribe();
     // Array de dependências vazio: inscreve na montagem e cancela na desmontagem
-  }, []);    return (
+  }, []);
+  return (
         // Provide the derived context values to children. We expose:
         // - signed: a boolean cast from the 'user' (true when user != null)
         // - loadingAuth: whether we're still checking the auth state
@@ -69,6 +81,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
             value={{
                 signed: !!user,
                 loadingAuth,
+                handleInfoUser,
+                user,
             }}
         >
             {children}
