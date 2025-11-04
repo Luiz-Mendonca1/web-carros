@@ -5,6 +5,9 @@ import { Input } from "../../components/input";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {auth} from "../../services/firebaseconection";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
   name: z.string().nonempty("O nome é obrigatório"),
@@ -15,20 +18,35 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function Register() {
+const navigate = useNavigate();
 const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
   resolver: zodResolver(schema),
   mode: "onChange",
 });
 
-function onSubmit(data: FormData) {
-  console.log(data);
+async function onSubmit(data: FormData) {
+  createUserWithEmailAndPassword(auth, data.email, data.password)
+  .then(async(user) => {
+    await updateProfile(user.user, {
+      displayName: data.name
+    });
+
+    console.log("Usuário cadastrado com sucesso:", user.user);
+    navigate('/dashboard', { replace: true }); 
+
+  })
+  .catch((error) => {
+    console.log("Erro ao cadastrar usuário:");
+    console.log(error);
+  });
+
 }
 
   return (
     <Container>
     <div className="w-full min-h-screen flex justify-center items-center flex-col gap-4">
       <Link to='/' className="mb-6 max-w-sm w-full">
-      <img src={logo} alt="" /></Link>
+      <img className="w-full" src={logo} alt="" /></Link>
 
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white max-w-xl w-full rounded-lg">
         <div className="mb-3">
@@ -61,7 +79,7 @@ function onSubmit(data: FormData) {
         ></Input>
         </div>
 
-        <button type="submit" className="bg-black text-white w-full rounded-md h-10 font-medium">Acessar</button>
+        <button type="submit" className="bg-black text-white w-full rounded-md h-10 font-medium">Cadastrar</button>
 
       </form>
       <Link to="/login" className="mt-4  hover:underline">

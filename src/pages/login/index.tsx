@@ -27,7 +27,7 @@ function onSubmit(data: FormData) {
     <Container>
     <div className="w-full min-h-screen flex justify-center items-center flex-col gap-4">
       <Link to='/' className="mb-6 max-w-sm w-full">
-      <img src={logo} alt="" /></Link>
+      <img className="w-full" src={logo} alt="" /></Link>
 
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white max-w-xl w-full rounded-lg">
         <div className="mb-3">
