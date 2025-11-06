@@ -2,6 +2,8 @@ import { Container } from "../../../components/container"
 import PainelHeader from "../../../components/painelHeader"
 
 import { FiUpload } from "react-icons/fi"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -24,13 +26,44 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function New() {
+  const navigate = useNavigate();
+  const [imageData, setImageData] = useState<string | null>(null);
+
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: "onChange",
   });
 
   function onSubmit(data: FormData) {
-    console.log(data);
+    // cria um objeto de carro com id e timestamp
+    const newCar = {
+      id: Date.now(),
+      name: data.name,
+      model: data.model,
+      year: data.year,
+      km: data.km,
+      price: data.price,
+      city: data.city,
+      whatsapp: data.whatsapp,
+      description: data.description,
+      // imagem (data URL) persistida no localStorage para exibição na Home
+      image: imageData,
+    };
+
+    // salva no localStorage (array 'cars')
+    try {
+      const raw = localStorage.getItem('cars');
+      const cars = raw ? JSON.parse(raw) : [];
+      cars.unshift(newCar); // adiciona no início
+      localStorage.setItem('cars', JSON.stringify(cars));
+      alert('Carro cadastrado com sucesso!');
+      console.log('Carro salvo localmente:', newCar);
+      // redireciona para Home para visualizar o carro cadastrado
+      navigate('/');
+    } catch (err) {
+      console.error('Erro ao salvar carro no localStorage:', err);
+      alert('Não foi possível salvar o carro localmente. Veja o console para detalhes.');
+    }
   }
 
   return (
@@ -43,12 +76,30 @@ export default function New() {
             <FiUpload size={40} className="text-gray-600"/>
           </div>
           <div className="cursor-pointer">
-            <input type="file" accept="image" className="opacity-0 cursor-pointer"/>
+            <input
+              type="file"
+              accept="image/*"
+              className="opacity-0 cursor-pointer"
+              onChange={e => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = () => {
+                  const result = reader.result as string | null;
+                  if (result) {
+                    setImageData(result);
+                    alert('Imagem selecionada com sucesso!');
+                  }
+                };
+                reader.readAsDataURL(file);
+              }}
+            />
           </div>
         </button>
       </div>
       <div className="w-full bg-white p-3 rounded-lg flex flex-col sm:flex-col items-center gap-2 mt-2 ">
-        <form onSubmit={handleSubmit((onSubmit))} className="w-full">
+  <form onSubmit={handleSubmit(onSubmit)} className="w-full">
           <div></div>
           <div className="mb-3">
             <p className="mb-2 font-medium">Nome do carro</p>
