@@ -27,6 +27,7 @@ type FormData = z.infer<typeof schema>;
 
 export default function New() {
   const navigate = useNavigate();
+  // Estado para armazenar a Data URL da imagem.
   const [imageData, setImageData] = useState<string | null>(null);
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -35,6 +36,11 @@ export default function New() {
   });
 
   function onSubmit(data: FormData) {
+    if (!imageData) {
+        alert('Selecione uma imagem para o carro.');
+        return;
+    }
+    
     // cria um objeto de carro com id e timestamp
     const newCar = {
       id: Date.now(),
@@ -46,7 +52,7 @@ export default function New() {
       city: data.city,
       whatsapp: data.whatsapp,
       description: data.description,
-      // imagem (data URL) persistida no localStorage para exibição na Home
+      // Salva a Data URL (string) para aparecer na Home.
       image: imageData,
     };
 
@@ -56,13 +62,14 @@ export default function New() {
       const cars = raw ? JSON.parse(raw) : [];
       cars.unshift(newCar); // adiciona no início
       localStorage.setItem('cars', JSON.stringify(cars));
-      alert('Carro cadastrado com sucesso!');
+      alert('Carro cadastrado com sucesso! A imagem aparecerá na Home.');
       console.log('Carro salvo localmente:', newCar);
       // redireciona para Home para visualizar o carro cadastrado
-      navigate('/');
+      navigate('/', { replace: true });
     } catch (err) {
       console.error('Erro ao salvar carro no localStorage:', err);
-      alert('Não foi possível salvar o carro localmente. Veja o console para detalhes.');
+      // Alerta caso o limite de armazenamento seja atingido
+      alert('NÃO FOI POSSÍVEL salvar o carro localmente. O limite de armazenamento pode ter sido excedido novamente. Limpe o localStorage e tente novamente.');
     }
   }
 
@@ -71,9 +78,18 @@ export default function New() {
     <Container>
       <PainelHeader />
       <div className="w-full bg-white p-3 rounded-lg flex flex-col sm:flex-col items-center gap-2 ">
-        <button className="border-2 w-48 rounded-lg  p-4 flex items-center justify-center hover:border-gray-400 cursor-pointer h-32">
+        {/* Pré-visualização da imagem carregada */}
+        {imageData && (
+          <img
+            src={imageData}
+            alt="Pré-visualização do carro"
+            className="w-full max-w-sm max-h-52 object-cover rounded-lg mb-4"
+          />
+        )}
+        <button className={`border-2 w-48 rounded-lg  p-4 flex items-center justify-center hover:border-gray-400 cursor-pointer h-32 ${imageData ? 'border-green-500' : ''}`}>
           <div className="absolute cursor-pointer">
             <FiUpload size={40} className="text-gray-600"/>
+            <p className="text-sm mt-1">{imageData ? 'Mudar Imagem' : 'Carregar Imagem'}</p>
           </div>
           <div className="cursor-pointer">
             <input
@@ -92,11 +108,14 @@ export default function New() {
                     alert('Imagem selecionada com sucesso!');
                   }
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(file); // Converte o arquivo em Data URL
               }}
             />
           </div>
         </button>
+        <p className="text-sm text-red-500 mt-2">
+            *A imagem será salva no seu navegador (localStorage). Lembre-se que há um limite de armazenamento.
+        </p>
       </div>
       <div className="w-full bg-white p-3 rounded-lg flex flex-col sm:flex-col items-center gap-2 mt-2 ">
   <form onSubmit={handleSubmit(onSubmit)} className="w-full">

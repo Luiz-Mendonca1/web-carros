@@ -3,13 +3,10 @@ import { useEffect, useState } from "react"
 
 // import das imagens presentes em src/assets para popular a lista inicial
 import img1 from "../../assets/00eebe091d6651497270e95eb9b47ddd.jpg"
-import img2 from "../../assets/27c21c651c01b529dc0cc7e05e9c1b18.jpg"
-import img3 from "../../assets/29260c5db26310c1d64ee9a04de675a5.jpg"
+// Removidos: img2, img3, img5, img6, img8
 import img4 from "../../assets/4850d21b7715a2d083abba0c76632f81.jpg"
-import img5 from "../../assets/5573a08772e92ec85f6dd4daa843ab1d.jpg"
-import img6 from "../../assets/67ce989e63b0c3ebda9c490dfb69370c.jpg"
 import img7 from "../../assets/73f257c176e7625dc2a575a183f8a199.jpg"
-import img8 from "../../assets/d5ec7fc7fce181d52e35c67342c115ba.jpg"
+
 
 type Car = {
   id: number;
@@ -34,7 +31,8 @@ export default function Home() {
 
       // se não houver carros salvos, popular usando as imagens em assets
       if (!parsed || parsed.length === 0) {
-        const seedImages = [img1, img2, img3, img4, img5, img6, img7, img8]
+        // A lista de imagens foi reduzida para apenas as 3 especificadas
+        const seedImages = [img1, img4, img7]
         const seeded = seedImages.map((imgSrc, idx) => ({
           id: 1000 + idx,
           name: `Carro ${idx + 1}`,
